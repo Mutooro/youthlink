@@ -1,0 +1,25 @@
+.programs-page { min-height: 100vh; }
+.programs-header { background: var(--navy-mid); border-bottom: 1px solid var(--border); padding: 3.5rem 1.5rem; }
+.programs-header-inner { max-width: 1160px; margin: 0 auto; }
+.programs-header h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; margin-bottom: 0.6rem; }
+.programs-header p { color: var(--grey-light); max-width: 540px; font-size: 0.95rem; }
+.prog-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+.prog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.4rem; }
+.prog-card { border-radius: var(--radius-lg); padding: 1.8rem; display: flex; flex-direction: column; gap: 0.6rem; transition: transform 0.2s; }
+.prog-card:hover { transform: translateY(-4px); }
+.prog-green { background: linear-gradient(135deg, #00C165, #007540); color: #08192E; }
+.prog-yellow { background: linear-gradient(135deg, #F5C842, #D4A800); color: #08192E; }
+.prog-navy { background: var(--card); border: 1px solid var(--border); }
+.prog-teal { background: linear-gradient(135deg, #00A8B5, #006E78); color: #08192E; }
+.prog-purple { background: linear-gradient(135deg, #7B5EA7, #4A3270); }
+.prog-card-type { display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+.prog-card h3 { font-size: 1.2rem; font-weight: 800; }
+.prog-card p { font-size: 0.85rem; opacity: 0.85; line-height: 1.6; flex: 1; }
+.prog-meta-row { display: flex; flex-wrap: wrap; gap: 0.8rem; font-size: 0.78rem; opacity: 0.75; }
+.prog-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 0.4rem; }
+.prog-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.prog-cost-badge, .prog-date-badge { font-size: 0.72rem; font-weight: 600; background: rgba(0,0,0,0.12); padding: 0.2rem 0.6rem; border-radius: 50px; }
+.prog-apply-btn { background: rgba(0,0,0,0.15) !important; color: inherit !important; border: 1.5px solid rgba(0,0,0,0.15) !important; }
+.prog-apply-btn:hover { background: rgba(0,0,0,0.25) !important; }
+.prog-skeleton { height: 240px; background: var(--card); border-radius: var(--radius-lg); border: 1px solid var(--border); animation: shimmer 1.4s infinite; background: linear-gradient(90deg, var(--card) 25%, var(--card-hover) 50%, var(--card) 75%); background-size: 200% 100%; }
+@keyframes shimmer { to { background-position: -200% 0; } }
