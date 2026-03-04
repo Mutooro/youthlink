@@ -48,7 +48,7 @@ export default function JobDetail() {
     const { error } = await supabase.from('applications').insert({
       listing_id: id,
       profile_id: profile.id,
-      cover_letter: coverLetter,
+      cover_note: coverLetter,
     })
     setApplying(false)
     if (!error) {

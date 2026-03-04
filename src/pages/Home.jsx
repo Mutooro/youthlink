@@ -1,19 +1,41 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import {
+  Laptop,
+  Stethoscope,
+  BarChart3,
+  Sprout,
+  BookOpen,
+  Settings,
+  Smartphone,
+  Scale,
+  Search,
+  UserPlus,
+  FileText,
+  Target,
+  Handshake,
+  ArrowRight,
+  MapPin,
+  Briefcase,
+  Users,
+  GraduationCap,
+  Award
+} from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import JobCard from '../components/JobCard'
 import './Home.css'
 
-const DISTRICTS = ['Kampala','Wakiso','Mukono','Jinja','Gulu','Mbarara','Entebbe','Mbale','Fort Portal','Masaka']
+const DISTRICTS = ['Kampala', 'Wakiso', 'Mukono', 'Jinja', 'Gulu', 'Mbarara', 'Entebbe', 'Mbale', 'Fort Portal', 'Masaka']
+
 const CATEGORIES = [
-  { icon: '💻', name: 'Technology & ICT', count: 234 },
-  { icon: '🏥', name: 'Health & Medicine', count: 187 },
-  { icon: '📊', name: 'Finance & Banking', count: 156 },
-  { icon: '🌱', name: 'Agriculture', count: 143 },
-  { icon: '📚', name: 'Education & NGO', count: 128 },
-  { icon: '⚙️', name: 'Engineering', count: 112 },
-  { icon: '📱', name: 'Marketing & Media', count: 98 },
-  { icon: '⚖️', name: 'Legal', count: 67 },
+  { icon: Laptop, name: 'Technology & ICT', count: 234 },
+  { icon: Stethoscope, name: 'Health & Medicine', count: 187 },
+  { icon: BarChart3, name: 'Finance & Banking', count: 156 },
+  { icon: Sprout, name: 'Agriculture', count: 143 },
+  { icon: BookOpen, name: 'Education & NGO', count: 128 },
+  { icon: Settings, name: 'Engineering', count: 112 },
+  { icon: Smartphone, name: 'Marketing & Media', count: 98 },
+  { icon: Scale, name: 'Legal', count: 67 },
 ]
 
 export default function Home() {
@@ -62,7 +84,7 @@ export default function Home() {
 
           <form className="search-bar" onSubmit={handleSearch}>
             <div className="search-input-wrap">
-              <span className="search-icon">🔍</span>
+              <Search className="search-icon" size={20} />
               <input
                 type="text"
                 placeholder="Job title, skill, or keyword..."
@@ -71,25 +93,40 @@ export default function Home() {
                 className="search-input"
               />
             </div>
-            <select
-              value={district}
-              onChange={e => setDistrict(e.target.value)}
-              className="search-select"
-            >
-              <option value="">All districts</option>
-              {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
+            <div className="search-select-wrap">
+              <MapPin className="select-icon" size={18} />
+              <select
+                value={district}
+                onChange={e => setDistrict(e.target.value)}
+                className="search-select"
+              >
+                <option value="">All districts</option>
+                {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
             <button type="submit" className="btn btn-primary">Search</button>
           </form>
 
           <div className="hero-stats">
-            <div className="stat"><strong>1,200+</strong><span>Active listings</span></div>
+            <div className="stat">
+              <div className="stat-icon-bg"><Briefcase size={20} /></div>
+              <div><strong>1,200+</strong><span>Active listings</span></div>
+            </div>
             <div className="stat-divider" />
-            <div className="stat"><strong>340+</strong><span>Employers</span></div>
+            <div className="stat">
+              <div className="stat-icon-bg"><Users size={20} /></div>
+              <div><strong>340+</strong><span>Employers</span></div>
+            </div>
             <div className="stat-divider" />
-            <div className="stat"><strong>80+</strong><span>Youth programs</span></div>
+            <div className="stat">
+              <div className="stat-icon-bg"><GraduationCap size={20} /></div>
+              <div><strong>80+</strong><span>Youth programs</span></div>
+            </div>
             <div className="stat-divider" />
-            <div className="stat"><strong>15K+</strong><span>Students placed</span></div>
+            <div className="stat">
+              <div className="stat-icon-bg"><Award size={20} /></div>
+              <div><strong>15K+</strong><span>Students placed</span></div>
+            </div>
           </div>
         </div>
       </section>
@@ -106,7 +143,7 @@ export default function Home() {
                 to={`/jobs?category=${encodeURIComponent(c.name)}`}
                 className="cat-card"
               >
-                <span className="cat-icon">{c.icon}</span>
+                <span className="cat-icon"><c.icon size={28} strokeWidth={1.5} /></span>
                 <span className="cat-name">{c.name}</span>
                 <span className="cat-count">{c.count} listings</span>
               </Link>
@@ -123,7 +160,7 @@ export default function Home() {
               <div className="section-label">Just posted</div>
               <h2 className="section-title">Latest <span>opportunities</span></h2>
             </div>
-            <Link to="/jobs" className="btn btn-secondary">View all →</Link>
+            <Link to="/jobs" className="btn btn-secondary">View all <ArrowRight size={16} style={{ marginLeft: '8px' }} /></Link>
           </div>
           {recentJobs.length > 0 ? (
             <div className="jobs-grid">
@@ -144,13 +181,13 @@ export default function Home() {
           <h2 className="section-title">Find a job in <span>4 simple steps</span></h2>
           <div className="steps-grid">
             {[
-              { n: '01', icon: '✍️', title: 'Create your profile', desc: 'Sign up in 60 seconds and tell us your skills, education, and what you\'re looking for.' },
-              { n: '02', icon: '📄', title: 'Upload your CV', desc: 'Our system reads your CV and builds a skills profile to match you with relevant opportunities.' },
-              { n: '03', icon: '🎯', title: 'Get matched', desc: 'Receive curated matches for jobs, internships, contracts and programs near you.' },
-              { n: '04', icon: '🤝', title: 'Apply & connect', desc: 'Apply directly to employers, track your applications and land your next opportunity.' },
+              { n: '01', icon: UserPlus, title: 'Create your profile', desc: 'Sign up in 60 seconds and tell us your skills, education, and what you\'re looking for.' },
+              { n: '02', icon: FileText, title: 'Upload your CV', desc: 'Our system reads your CV and builds a skills profile to match you with relevant opportunities.' },
+              { n: '03', icon: Target, title: 'Get matched', desc: 'Receive curated matches for jobs, internships, contracts and programs near you.' },
+              { n: '04', icon: Handshake, title: 'Apply & connect', desc: 'Apply directly to employers, track your applications and land your next opportunity.' },
             ].map(s => (
               <div key={s.n} className="how-step">
-                <div className="step-icon">{s.icon}</div>
+                <div className="step-icon"><s.icon size={32} strokeWidth={1.5} /></div>
                 <span className="step-num">{s.n}</span>
                 <h3>{s.title}</h3>
                 <p>{s.desc}</p>
@@ -168,7 +205,7 @@ export default function Home() {
             <p>Join thousands of Ugandan youth already building their careers on YouthLink.</p>
           </div>
           <div className="cta-actions">
-            <Link to="/auth?mode=signup" className="btn btn-primary btn-lg">Create Free Account →</Link>
+            <Link to="/auth?mode=signup" className="btn btn-primary btn-lg">Create Free Account <ArrowRight size={20} style={{ marginLeft: '8px' }} /></Link>
             <Link to="/jobs" className="btn btn-secondary btn-lg">Browse Jobs</Link>
           </div>
         </div>

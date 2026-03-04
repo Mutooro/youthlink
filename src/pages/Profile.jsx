@@ -1,4 +1,19 @@
 import { useState, useEffect } from 'react'
+import {
+  CheckCircle2,
+  Circle,
+  FileText,
+  UploadCloud,
+  Paperclip,
+  Save,
+  AlertCircle,
+  Check,
+  Phone,
+  MapPin,
+  User,
+  Info,
+  ChevronRight
+} from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import './Profile.css'
@@ -67,8 +82,12 @@ export default function Profile() {
       })
       .eq('user_id', user.id)
     setSaving(false)
-    if (!error) { fetchProfile(user.id); showToast('✅ Profile saved!') }
-    else showToast('❌ Error saving profile', 'error')
+    if (!error) {
+      fetchProfile(user.id)
+      showToast('Profile saved successfully!', 'success')
+    } else {
+      showToast('Error saving profile', 'error')
+    }
   }
 
   async function handleCvUpload() {
@@ -80,9 +99,9 @@ export default function Profile() {
     if (!uploadError) {
       await supabase.from('profiles').update({ cv_url: path }).eq('user_id', user.id)
       fetchProfile(user.id)
-      showToast('✅ CV uploaded successfully!')
+      showToast('CV uploaded successfully!', 'success')
     } else {
-      showToast('❌ Upload failed. Check storage is set up.', 'error')
+      showToast('Upload failed. Check storage is set up.', 'error')
     }
     setUploading(false)
     setCvFile(null)
@@ -108,22 +127,34 @@ export default function Profile() {
 
             <div className="input-wrap">
               <label className="input-label">Full name</label>
-              <input className="input" type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Your full name" />
+              <div className="input-icon-wrap">
+                <User className="input-icon" size={18} />
+                <input className="input" type="text" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} placeholder="Your full name" />
+              </div>
             </div>
             <div className="input-wrap">
               <label className="input-label">Phone number</label>
-              <input className="input" type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+256 7XX XXX XXX" />
+              <div className="input-icon-wrap">
+                <Phone className="input-icon" size={18} />
+                <input className="input" type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+256 7XX XXX XXX" />
+              </div>
             </div>
             <div className="input-wrap">
               <label className="input-label">District</label>
-              <select className="input" value={form.district} onChange={e => setForm(f => ({ ...f, district: e.target.value }))}>
-                <option value="">Select your district</option>
-                {DISTRICTS.map(d => <option key={d}>{d}</option>)}
-              </select>
+              <div className="input-icon-wrap">
+                <MapPin className="input-icon" size={18} />
+                <select className="input" value={form.district} onChange={e => setForm(f => ({ ...f, district: e.target.value }))}>
+                  <option value="">Select your district</option>
+                  {DISTRICTS.map(d => <option key={d}>{d}</option>)}
+                </select>
+              </div>
             </div>
             <div className="input-wrap">
               <label className="input-label">Bio / About you</label>
-              <textarea className="input" rows={4} value={form.bio} onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} placeholder="Tell employers a bit about yourself..." />
+              <div className="textarea-icon-wrap">
+                <Info className="textarea-icon" size={18} />
+                <textarea className="input" rows={4} value={form.bio} onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} placeholder="Tell employers a bit about yourself..." />
+              </div>
             </div>
 
             <h2 className="profile-section-title" style={{ marginTop: '1.5rem' }}>Skills & availability</h2>
@@ -157,8 +188,12 @@ export default function Profile() {
               </div>
             </div>
 
-            <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving...' : 'Save profile'}
+            <button className="btn btn-primary btn-save" onClick={handleSave} disabled={saving}>
+              {saving ? 'Saving...' : (
+                <>
+                  <Save size={18} /> Save profile
+                </>
+              )}
             </button>
           </div>
 
@@ -169,7 +204,9 @@ export default function Profile() {
 
             {profile?.cv_url ? (
               <div className="cv-uploaded">
-                <div className="cv-icon">📄</div>
+                <div className="cv-icon">
+                  <FileText size={24} />
+                </div>
                 <div>
                   <strong>CV uploaded</strong>
                   <p>Your CV is live and being matched with opportunities.</p>
@@ -184,7 +221,9 @@ export default function Profile() {
                 className="cv-dropzone"
                 onClick={() => document.getElementById('cv-input').click()}
               >
-                <div className="cv-drop-icon">📤</div>
+                <div className="cv-drop-icon">
+                  <UploadCloud size={32} />
+                </div>
                 <strong>Click to upload your CV</strong>
                 <span>PDF, DOC, or DOCX — max 5MB</span>
               </div>
@@ -200,7 +239,9 @@ export default function Profile() {
 
             {cvFile && (
               <div className="cv-selected">
-                <span>📎 {cvFile.name}</span>
+                <span>
+                  <Paperclip size={14} /> {cvFile.name}
+                </span>
                 <button
                   className="btn btn-primary btn-sm"
                   onClick={handleCvUpload}
@@ -245,7 +286,7 @@ export default function Profile() {
                   [profile?.cv_url, 'CV uploaded'],
                 ].map(([val, label]) => (
                   <li key={label} className={val ? 'done' : ''}>
-                    <span>{val ? '✓' : '○'}</span> {label}
+                    <span>{val ? <CheckCircle2 size={14} /> : <Circle size={14} />}</span> {label}
                   </li>
                 ))}
               </ul>
@@ -256,7 +297,10 @@ export default function Profile() {
 
       {toast && (
         <div className="toast-container">
-          <div className={`toast ${toast.type}`}>{toast.msg}</div>
+          <div className={`toast ${toast.type}`}>
+            {toast.type === 'success' ? <Check size={18} /> : <AlertCircle size={18} />}
+            <span>{toast.msg}</span>
+          </div>
         </div>
       )}
     </div>

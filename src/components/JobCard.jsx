@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { MapPin, Clock } from 'lucide-react'
 import './JobCard.css'
 
 const TYPE_COLORS = {
@@ -41,8 +42,18 @@ export default function JobCard({ job, matchScore }) {
         <span className={`badge ${TYPE_COLORS[job.type] || 'badge-grey'}`}>
           {TYPE_LABELS[job.type] || job.type}
         </span>
-        {job.district && <span className="badge badge-grey">📍 {job.district}</span>}
-        {job.duration && <span className="badge badge-grey">⏱ {job.duration}</span>}
+        {job.district && (
+          <span className="badge badge-grey">
+            <MapPin size={12} style={{ marginRight: '4px' }} />
+            {job.district}
+          </span>
+        )}
+        {job.duration && (
+          <span className="badge badge-grey">
+            <Clock size={12} style={{ marginRight: '4px' }} />
+            {job.duration}
+          </span>
+        )}
       </div>
 
       {job.skills_required?.length > 0 && (

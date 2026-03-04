@@ -1,0 +1,113 @@
+.post-job-page {
+  padding: 4rem 1.5rem;
+  min-height: calc(100vh - 80px);
+  background: #f8fafc;
+}
+
+.post-job-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.post-job-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.header-icon-bg {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--green-dim);
+  color: var(--green);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 1.5rem;
+}
+
+.post-job-header h1 {
+  font-size: 2.2rem;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.post-job-header p {
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+.post-job-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.input-with-icon,
+.textarea-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-icon {
+  position: absolute;
+  left: 1.2rem;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.field-icon-top {
+  position: absolute;
+  left: 1.2rem;
+  top: 1.2rem;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.input-with-icon .input {
+  padding-left: 3rem !important;
+  width: 100%;
+}
+
+.textarea-with-icon .input {
+  padding-left: 3rem;
+  width: 100%;
+}
+
+.input.no-icon-padding {
+  padding-left: 1.2rem !important;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.post-job-footer {
+  margin-top: 2.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.post-job-footer .btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .post-job-card {
+    padding: 1.5rem;
+  }
+
+  .input-row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}

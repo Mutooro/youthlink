@@ -8,6 +8,8 @@ import Profile from './pages/Profile'
 import Dashboard from './pages/Dashboard'
 import Auth from './pages/Auth'
 import JobDetail from './pages/JobDetail'
+import PostJob from './pages/PostJob'
+import ManageJob from './pages/ManageJob'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -27,6 +29,8 @@ function AppRoutes() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/post-job" element={<ProtectedRoute><PostJob /></ProtectedRoute>} />
+        <Route path="/manage-job/:id" element={<ProtectedRoute><ManageJob /></ProtectedRoute>} />
       </Routes>
     </>
   )
