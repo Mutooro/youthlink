@@ -3,14 +3,14 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import './Profile.css'
 
-const DISTRICTS = ['Kampala','Wakiso','Mukono','Jinja','Gulu','Mbarara','Entebbe','Mbale','Fort Portal','Masaka']
+const DISTRICTS = ['Kampala', 'Wakiso', 'Mukono', 'Jinja', 'Gulu', 'Mbarara', 'Entebbe', 'Mbale', 'Fort Portal', 'Masaka']
 const AVAILABILITIES = [
   { value: 'immediately', label: 'Immediately available' },
   { value: '1_month', label: 'Available in 1 month' },
   { value: '3_months', label: 'Available in 3 months' },
   { value: 'not_looking', label: 'Not actively looking' },
 ]
-const LOOKING_FOR_OPTIONS = ['internship','fulltime','contract','parttime','program']
+const LOOKING_FOR_OPTIONS = ['internship', 'fulltime', 'contract', 'parttime', 'program']
 
 export default function Profile() {
   const { user, profile, fetchProfile } = useAuth()
