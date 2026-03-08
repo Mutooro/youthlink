@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import './Programs.css'
 
-const TYPES = ['bootcamp','mentorship','empowerment','scholarship','training']
+const TYPES = ['bootcamp', 'mentorship', 'empowerment', 'scholarship', 'training']
 const TYPE_ICONS = { bootcamp: '💻', mentorship: '🤝', empowerment: '💪', scholarship: '🎓', training: '📚' }
 const COLORS = ['prog-green', 'prog-yellow', 'prog-navy', 'prog-teal', 'prog-purple']
 
@@ -87,7 +87,7 @@ export default function Programs() {
                         </span>
                       )}
                     </div>
-                    <Link to="/auth?mode=signup" className="btn btn-sm prog-apply-btn">Apply →</Link>
+                    <Link to={`/programs/${p.id}`} className="btn btn-sm prog-apply-btn">Apply →</Link>
                   </div>
                 </div>
               ))}

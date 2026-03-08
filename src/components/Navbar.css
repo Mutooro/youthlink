@@ -105,6 +105,41 @@
   border-radius: 50%;
 }
 
+.nav-icon-link {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: var(--grey-light);
+  transition: all 0.2s;
+  border-radius: 50%;
+}
+
+.nav-icon-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--white);
+}
+
+.nav-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: var(--green);
+  color: #08192E;
+  font-size: 0.65rem;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 0 4px;
+  border: 2px solid #08192E;
+}
+
+
 .avatar-circle {
   width: 34px;
   height: 34px;

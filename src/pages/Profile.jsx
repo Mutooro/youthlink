@@ -16,9 +16,10 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import { UGANDA_DISTRICTS } from '../data/uganda_districts'
 import './Profile.css'
 
-const DISTRICTS = ['Kampala', 'Wakiso', 'Mukono', 'Jinja', 'Gulu', 'Mbarara', 'Entebbe', 'Mbale', 'Fort Portal', 'Masaka']
+const DISTRICTS = UGANDA_DISTRICTS
 const AVAILABILITIES = [
   { value: 'immediately', label: 'Immediately available' },
   { value: '1_month', label: 'Available in 1 month' },

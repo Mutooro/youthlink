@@ -8,16 +8,22 @@ import {
   X,
   Briefcase,
   GraduationCap,
-  ArrowRight
+  ArrowRight,
+  Bell
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { useNotifications } from '../context/NotificationContext'
 import './Navbar.css'
 
 export default function Navbar() {
   const { user, profile, signOut } = useAuth()
+  const { unreadCount } = useNotifications()
   const location = useLocation()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  const isEmployer = profile?.role === 'employer'
+  const dashboardPath = isEmployer ? '/employer/dashboard' : '/dashboard'
 
   const links = [
     { to: '/jobs', label: 'Jobs & Internships', icon: Briefcase },
@@ -49,12 +55,23 @@ export default function Navbar() {
               </Link>
             </li>
           ))}
+          {isEmployer && (
+            <li>
+              <Link to="/post-job" className={`nav-link ${location.pathname === '/post-job' ? 'active' : ''}`}>
+                Post a Job
+              </Link>
+            </li>
+          )}
         </ul>
 
         <div className="navbar-actions">
           {user ? (
             <div className="nav-user">
-              <Link to="/dashboard" className="nav-link dashboard-link">
+              <Link to="/notifications" className="nav-icon-link" title="Notifications">
+                <Bell size={20} />
+                {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
+              </Link>
+              <Link to={dashboardPath} className="nav-link dashboard-link">
                 <LayoutDashboard size={18} />
                 <span>Dashboard</span>
               </Link>
@@ -91,10 +108,16 @@ export default function Navbar() {
                 <span>{l.label}</span>
               </Link>
             ))}
+            {isEmployer && (
+              <Link to="/post-job" className="mobile-link" onClick={() => setMenuOpen(false)}>
+                <Briefcase size={20} />
+                <span>Post a Job</span>
+              </Link>
+            )}
             <div className="mobile-divider" />
             {user ? (
               <>
-                <Link to="/dashboard" className="mobile-link" onClick={() => setMenuOpen(false)}>
+                <Link to={dashboardPath} className="mobile-link" onClick={() => setMenuOpen(false)}>
                   <LayoutDashboard size={20} />
                   <span>Dashboard</span>
                 </Link>

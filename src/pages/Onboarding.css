@@ -1,0 +1,210 @@
+.onboarding-page {
+    min-height: 100vh;
+    background: #0a0a0c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.onboarding-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.onboarding-bg .orb {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+}
+
+.orb-1 {
+    top: -200px;
+    right: -200px;
+    background: #00c165;
+}
+
+.orb-2 {
+    bottom: -200px;
+    left: -200px;
+    background: #00f0ff;
+}
+
+.onboarding-container {
+    width: 100%;
+    max-width: 500px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.onboarding-progress {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.progress-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: var(--grey);
+    transition: all 0.3s;
+}
+
+.progress-dot.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--white);
+    box-shadow: 0 0 15px rgba(0, 193, 101, 0.3);
+}
+
+.progress-dot.done {
+    background: var(--green-dim);
+    color: var(--green);
+}
+
+.onboarding-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 2rem;
+    padding: 3rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.ob-step h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+.ob-step p {
+    color: var(--grey-light);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.ob-icon-header {
+    width: 64px;
+    height: 64px;
+    background: var(--green-dim);
+    border-radius: 1.2rem;
+    display: grid;
+    place-items: center;
+    color: var(--green);
+    margin-bottom: 1.5rem;
+}
+
+.ob-next {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1rem !important;
+}
+
+.ob-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.pills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.pill-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--white);
+    padding: 0.6rem 1.2rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pill-btn:hover {
+    border-color: var(--grey);
+}
+
+.pill-btn.active {
+    background: var(--green-dim);
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.ob-success-card {
+    background: linear-gradient(135deg, rgba(0, 193, 101, 0.1) 0%, rgba(0, 240, 255, 0.05) 100%);
+    border: 1px solid rgba(0, 193, 101, 0.2);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.sparkle-icon {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    color: #ffd700;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+}
+
+.ob-actions-final {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.skip-hint {
+    color: var(--grey);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+@media (max-width: 600px) {
+    .onboarding-card {
+        padding: 2rem;
+    }
+
+    .ob-step h2 {
+        font-size: 1.6rem;
+    }
+}

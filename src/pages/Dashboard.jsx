@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import { useMatches } from '../hooks/useMatches'
 import './Dashboard.css'
 
 const STATUS_COLORS = {
@@ -20,7 +21,7 @@ export default function Dashboard() {
   const { user, profile } = useAuth()
   const [applications, setApplications] = useState([]) // For students
   const [myListings, setMyListings] = useState([])     // For employers
-  const [matches, setMatches] = useState([])
+  const { matches, loading: matchesLoading } = useMatches(profile)
   const [loading, setLoading] = useState(true)
   const [showSetup, setShowSetup] = useState(false) // New: for first-time employers
 
@@ -46,15 +47,6 @@ export default function Dashboard() {
       .eq('profile_id', profile.id)
       .order('applied_at', { ascending: false })
     setApplications(apps || [])
-
-    // 2. Fetch matches (student only)
-    const { data: jobMatches } = await supabase
-      .from('listings')
-      .select('*, employers(company_name)')
-      .eq('is_active', true)
-      .limit(4)
-    setMatches(jobMatches || [])
-
     setLoading(false)
   }
 
@@ -236,16 +228,24 @@ function StudentDashboard({ applications, matches, profile }) {
             <h2>Suggested for you</h2>
             {matches.length > 0 ? (
               <div className="match-list">
-                {matches.map(job => (
-                  <Link key={job.id} to={`/jobs/${job.id}`} className="match-item">
-                    <div className="match-logo">{job.employers?.company_name?.[0] || '?'}</div>
-                    <div className="match-info">
-                      <strong>{job.title}</strong>
-                      <span>{job.employers?.company_name}</span>
-                    </div>
-                    <span className={`badge ${job.type === 'internship' ? 'badge-green' : 'badge-grey'}`}>{job.type}</span>
-                  </Link>
-                ))}
+                {matches.map(job => {
+                  // simple pct calculation: score of 10+ is high match
+                  const matchPct = Math.min(Math.round((job.matchScore / 12) * 100), 99)
+
+                  return (
+                    <Link key={job.id} to={`/jobs/${job.id}`} className="match-item">
+                      <div className="match-logo">{job.employers?.company_name?.[0] || '?'}</div>
+                      <div className="match-info">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <strong>{job.title}</strong>
+                          {job.matchScore > 0 && <span className="match-pct">{matchPct}% match</span>}
+                        </div>
+                        <span>{job.employers?.company_name}</span>
+                      </div>
+                      <span className={`badge ${job.type === 'internship' ? 'badge-green' : 'badge-grey'}`}>{job.type}</span>
+                    </Link>
+                  )
+                })}
               </div>
             ) : <p className="dash-empty">Complete profile for matches.</p>}
           </div>

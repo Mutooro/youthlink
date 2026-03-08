@@ -12,9 +12,10 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import { UGANDA_DISTRICTS } from '../data/uganda_districts'
 import './PostJob.css'
 
-const DISTRICTS = ['Kampala', 'Wakiso', 'Mukono', 'Jinja', 'Gulu', 'Mbarara', 'Entebbe', 'Mbale', 'Fort Portal', 'Masaka']
+const DISTRICTS = UGANDA_DISTRICTS
 const CATEGORIES = ['Technology & ICT', 'Health & Medicine', 'Finance & Banking', 'Agriculture', 'Education & NGO', 'Engineering', 'Marketing & Media', 'Legal']
 
 export default function PostJob() {
