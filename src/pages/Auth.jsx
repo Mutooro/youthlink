@@ -11,6 +11,7 @@ import {
   User
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabase'
 import './Auth.css'
 
 export default function Auth() {
@@ -44,20 +45,37 @@ export default function Auth() {
     if (mode === 'signin') {
       const { error } = await signIn(email, password)
       if (error) {
-        setError(error.message)
+        setError(
+          error.message === 'Email not confirmed'
+            ? 'Please confirm your email first. Check your inbox (and spam folder).'
+            : error.message
+        )
         setLoading(false)
       }
     } else {
       if (!fullName.trim()) { setError('Please enter your full name'); setLoading(false); return }
-      const { error } = await signUp(email, password, fullName, role)
+      const { data, error } = await signUp(email, password, fullName, role)
       if (error) {
         setError(error.message)
         setLoading(false)
       } else {
-        setSuccess('Account created! Check your email to confirm, then sign in.')
+        // Supabase returns a session immediately if email confirmation is OFF
+        // If a session exists, the onAuthStateChange will redirect automatically
+        if (data?.session) {
+          // Email confirmation disabled — user is already logged in, let redirect handle it
+          setLoading(false)
+          return
+        }
+        setSuccess(email)
         setLoading(false)
       }
     }
+  }
+
+  async function resendConfirmation(emailAddr) {
+    const { error } = await supabase.auth.resend({ type: 'signup', email: emailAddr })
+    if (error) alert('Could not resend: ' + error.message)
+    else alert('Confirmation email resent! Check your inbox and spam folder.')
   }
 
   if (authLoading) return <div className="page-loading">Checking session...</div>
@@ -80,11 +98,21 @@ export default function Auth() {
         {success ? (
           <div className="auth-success">
             <CheckCircle2 size={48} className="success-icon-svg" />
-            <h3>You're in!</h3>
-            <p>{success}</p>
-            <button className="btn btn-primary" onClick={() => { setSuccess(''); setMode('signin') }}>
-              Sign in <ArrowRight size={18} />
-            </button>
+            <h3>Check your email!</h3>
+            <p>We sent a confirmation link to <strong>{success}</strong>.<br />Click it to activate your account, then sign in here.</p>
+            <p style={{ fontSize: '0.8rem', color: '#7A9AB5', marginTop: '0.5rem' }}>Don't see it? Check your <strong>spam / junk</strong> folder.</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1.5rem' }}>
+              <button className="btn btn-primary" onClick={() => { setSuccess(''); setMode('signin') }}>
+                Go to Sign in <ArrowRight size={18} />
+              </button>
+              <button
+                className="btn btn-ghost"
+                style={{ fontSize: '0.85rem' }}
+                onClick={() => resendConfirmation(success)}
+              >
+                Resend confirmation email
+              </button>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="auth-form">

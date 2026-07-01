@@ -23,7 +23,6 @@ export default function Dashboard() {
   const [myListings, setMyListings] = useState([])     // For employers
   const { matches, loading: matchesLoading } = useMatches(profile)
   const [loading, setLoading] = useState(true)
-  const [showSetup, setShowSetup] = useState(false) // New: for first-time employers
 
   const isEmployer = profile?.role === 'employer'
 
@@ -55,12 +54,20 @@ export default function Dashboard() {
       .from('employers')
       .select('id')
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle()
 
     if (error || !employerRecord) {
-      setShowSetup(true)
-      setLoading(false)
-      return
+      const { data: createdEmployer } = await supabase
+        .from('employers')
+        .insert({ user_id: user.id, company_name: `${profile?.full_name || 'New'}'s company` })
+        .select('id')
+        .single()
+
+      if (createdEmployer) {
+        setMyListings([])
+        setLoading(false)
+        return
+      }
     }
 
     const { data: listings } = await supabase
@@ -84,68 +91,21 @@ export default function Dashboard() {
           <div>
             <h1>Welcome back, <span className="hl-green">{firstName}</span> 👋</h1>
             <p>
-              {showSetup
-                ? "Let's get your company set up on YouthLink."
-                : `Here's what's happening with your ${isEmployer ? 'recruitment' : 'activity'} on YouthLink.`
-              }
+              {`Here's what's happening with your ${isEmployer ? 'recruitment' : 'activity'} on YouthLink.`}
             </p>
           </div>
-          {!showSetup && (
-            <div className="dash-actions">
-              {isEmployer && <Link to="/post-job" className="btn btn-primary">Post a job +</Link>}
-              <Link to="/profile" className="btn btn-ghost">Edit profile →</Link>
-            </div>
-          )}
+          <div className="dash-actions">
+            {isEmployer && <Link to="/post-job" className="btn btn-primary">Post a job +</Link>}
+            <Link to="/profile" className="btn btn-ghost">Edit profile →</Link>
+          </div>
         </div>
 
         {isEmployer ? (
-          showSetup ? <EmployerSetup user={user} onComplete={() => { setShowSetup(false); fetchEmployerData() }} />
-            : <EmployerDashboard myListings={myListings} />
+          <EmployerDashboard myListings={myListings} />
         ) : (
           <StudentDashboard applications={applications} matches={matches} profile={profile} />
         )}
       </div>
-    </div>
-  )
-}
-
-function EmployerSetup({ user, onComplete }) {
-  const [name, setName] = useState('')
-  const [web, setWeb] = useState('')
-  const [busy, setBusy] = useState(false)
-
-  async function handleSetup(e) {
-    e.preventDefault()
-    setBusy(true)
-    const { error } = await supabase
-      .from('employers')
-      .insert({
-        user_id: user.id,
-        company_name: name,
-        website: web
-      })
-    if (!error) onComplete()
-    else alert('Error creating company profile')
-    setBusy(false)
-  }
-
-  return (
-    <div className="dash-panel setup-panel">
-      <h2>Complete your Employer Profile</h2>
-      <p>Before you can post jobs, we need a few details about your organization.</p>
-      <form onSubmit={handleSetup} style={{ marginTop: '1.5rem', maxWidth: '400px' }}>
-        <div className="input-wrap">
-          <label className="input-label">Company Name</label>
-          <input className="input" required value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Acme Corp Uganda" />
-        </div>
-        <div className="input-wrap">
-          <label className="input-label">Website (Optional)</label>
-          <input className="input" value={web} onChange={e => setWeb(e.target.value)} placeholder="https://example.com" />
-        </div>
-        <button className="btn btn-primary" disabled={busy}>
-          {busy ? 'Setting up...' : 'Create Company Profile'}
-        </button>
-      </form>
     </div>
   )
 }

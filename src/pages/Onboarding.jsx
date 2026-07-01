@@ -29,6 +29,7 @@ export default function Onboarding() {
     const navigate = useNavigate()
     const [step, setStep] = useState(1)
     const [loading, setLoading] = useState(false)
+    const [saveError, setSaveError] = useState('')
 
     const [form, setForm] = useState({
         full_name: '',
@@ -69,11 +70,16 @@ export default function Onboarding() {
 
     async function handleComplete() {
         setLoading(true)
+        setSaveError('')
         const skillsArr = form.skills.split(',').map(s => s.trim()).filter(Boolean)
 
+        // upsert: INSERT if no profile row exists yet, UPDATE if it does.
+        // This handles both fresh sign-ups (no trigger) and returning users.
         const { error } = await supabase
             .from('profiles')
-            .update({
+            .upsert({
+                user_id: user.id,
+                role: 'student',
                 full_name: form.full_name,
                 phone: form.phone,
                 district: form.district,
@@ -81,14 +87,13 @@ export default function Onboarding() {
                 skills: skillsArr,
                 looking_for: form.looking_for,
                 onboarding_completed: true
-            })
-            .eq('user_id', user.id)
+            }, { onConflict: 'user_id' })
 
         if (!error) {
             await fetchProfile(user.id)
             navigate('/dashboard')
         } else {
-            alert('Error saving profile: ' + error.message)
+            setSaveError('Could not save your profile: ' + error.message)
         }
         setLoading(false)
     }
@@ -241,9 +246,16 @@ export default function Onboarding() {
 
                             <div className="ob-actions-final">
                                 <button className="btn btn-primary btn-lg" onClick={handleComplete} disabled={loading}>
-                                    {loading ? 'Finalizing...' : 'Take me to my Dashboard'}
+                                    {loading ? 'Saving your profile...' : 'Take me to my Dashboard'}
                                 </button>
-                                <p className="skip-hint" onClick={handleComplete}>I'll finish this later</p>
+                                {saveError && (
+                                    <p style={{ color: '#FF5757', fontSize: '0.85rem', marginTop: '0.75rem', textAlign: 'center' }}>
+                                        ⚠️ {saveError}
+                                    </p>
+                                )}
+                                {!saveError && (
+                                    <p className="skip-hint" onClick={handleComplete}>I'll finish this later</p>
+                                )}
                             </div>
                         </div>
                     )}

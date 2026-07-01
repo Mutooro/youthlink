@@ -14,6 +14,10 @@ import ManageJob from './pages/ManageJob'
 import Onboarding from './pages/Onboarding'
 import ProgramDetail from './pages/ProgramDetail'
 import Notifications from './pages/Notifications'
+import NotFound from './pages/NotFound'
+import PublicProfile from './pages/PublicProfile'
+import EmployerPublicPage from './pages/EmployerPublicPage'
+import Footer from './components/Footer'
 
 function ProtectedRoute({ children, allowedRole = null }) {
   const { user, profile, loading } = useAuth()
@@ -40,6 +44,8 @@ function AppRoutes() {
         <Route path="/jobs/:id" element={<JobDetail />} />
         <Route path="/programs" element={<Programs />} />
         <Route path="/programs/:id" element={<ProgramDetail />} />
+        <Route path="/students/:slug" element={<PublicProfile />} />
+        <Route path="/employers/:slug" element={<EmployerPublicPage />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
@@ -68,7 +74,9 @@ function AppRoutes() {
             <ManageJob />
           </ProtectedRoute>
         } />
+        <Route path="*" element={<NotFound />} />
       </Routes>
+      <Footer />
     </>
   )
 }

@@ -34,11 +34,38 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }
 
+  async function ensureUserRecords(userId, fullName, role) {
+    const profilePayload = {
+      user_id: userId,
+      full_name: fullName,
+      role,
+      onboarding_completed: role === 'employer'
+    }
+
+    await supabase.from('profiles').upsert(profilePayload, { onConflict: 'user_id' })
+
+    if (role === 'employer') {
+      await supabase.from('employers').upsert(
+        { user_id: userId, company_name: `${fullName}'s company` },
+        { onConflict: 'user_id' }
+      )
+    }
+  }
+
   async function signUp(email, password, fullName, role) {
     const { data, error } = await supabase.auth.signUp({
-      email, password,
-      options: { data: { full_name: fullName, role } }
+      email,
+      password,
+      options: {
+        data: { full_name: fullName, role },
+        emailRedirectTo: `${window.location.origin}/auth?mode=signin`
+      }
     })
+
+    if (!error && data?.user) {
+      await ensureUserRecords(data.user.id, fullName, role)
+    }
+
     return { data, error }
   }
 

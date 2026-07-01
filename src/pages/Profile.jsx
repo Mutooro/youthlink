@@ -70,9 +70,12 @@ export default function Profile() {
   async function handleSave() {
     setSaving(true)
     const skillsArr = form.skills.split(',').map(s => s.trim()).filter(Boolean)
+
+    // upsert: INSERT if no profile row exists yet, UPDATE if it does.
     const { error } = await supabase
       .from('profiles')
-      .update({
+      .upsert({
+        user_id: user.id,
         full_name: form.full_name,
         district: form.district,
         phone: form.phone,
@@ -80,14 +83,14 @@ export default function Profile() {
         skills: skillsArr,
         availability: form.availability,
         looking_for: form.looking_for,
-      })
-      .eq('user_id', user.id)
+      }, { onConflict: 'user_id' })
+
     setSaving(false)
     if (!error) {
       fetchProfile(user.id)
       showToast('Profile saved successfully!', 'success')
     } else {
-      showToast('Error saving profile', 'error')
+      showToast('Error saving profile: ' + error.message, 'error')
     }
   }
 

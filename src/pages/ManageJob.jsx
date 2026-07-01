@@ -82,9 +82,9 @@ export default function ManageJob() {
                                                 </div>
                                             </div>
 
-                                            {app.cover_note && (
+                                            {app.cover_letter && (
                                                 <div style={{ marginTop: '1rem', padding: '0.8rem', background: '#f8fafc', borderRadius: '0.5rem', fontSize: '0.9rem', color: '#475569' }}>
-                                                    <strong>Note:</strong> {app.cover_note}
+                                                    <strong>Cover Letter:</strong> {app.cover_letter}
                                                 </div>
                                             )}
 

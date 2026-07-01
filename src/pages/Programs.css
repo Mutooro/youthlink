@@ -28,8 +28,44 @@
 .prog-filters {
     display: flex;
     flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 2.2rem;
+}
+
+.filter-pill {
+    display: inline-flex;
+    align-items: center;
     gap: 0.5rem;
-    margin-bottom: 2rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    color: var(--grey-light);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-pill:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--white);
+    color: var(--white);
+    transform: translateY(-1px);
+}
+
+.filter-pill.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--navy);
+    box-shadow: 0 4px 15px rgba(0, 193, 101, 0.2);
+}
+
+.filter-pill .icon-main {
+    opacity: 0.8;
+}
+
+.filter-pill.active .icon-main {
+    opacity: 1;
 }
 
 .prog-grid {
@@ -126,12 +162,18 @@
     background: rgba(0, 0, 0, 0.12);
     padding: 0.2rem 0.6rem;
     border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
 }
 
 .prog-apply-btn {
     background: rgba(0, 0, 0, 0.15) !important;
     color: inherit !important;
     border: 1.5px solid rgba(0, 0, 0, 0.15) !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
 }
 
 .prog-apply-btn:hover {

@@ -29,7 +29,10 @@ export default function PostJob() {
         district: '',
         description: '',
         requirements: '',
-        deadline: ''
+        deadline: '',
+        salary_min: '',
+        salary_max: '',
+        duration: ''
     })
     const [loading, setLoading] = useState(false)
     const [employerId, setEmployerId] = useState(null)
@@ -60,12 +63,27 @@ export default function PostJob() {
         e.preventDefault()
         if (!employerId) return
 
+        const skillsArr = form.requirements
+            .split('\n')
+            .map(s => s.replace(/^[-\*\u2022\s]+/, '').trim())
+            .filter(Boolean);
+
         setLoading(true)
         const { error } = await supabase
             .from('listings')
             .insert({
                 employer_id: employerId,
-                ...form
+                title: form.title,
+                type: form.type,
+                category: form.category,
+                district: form.district,
+                description: form.description,
+                requirements: form.requirements,
+                deadline: form.deadline || null,
+                duration: form.duration || null,
+                salary_min: form.salary_min ? parseInt(form.salary_min) : null,
+                salary_max: form.salary_max ? parseInt(form.salary_max) : null,
+                skills_required: skillsArr
             })
 
         setLoading(false)
@@ -180,17 +198,51 @@ export default function PostJob() {
                         </div>
                     </div>
 
-                    <div className="input-wrap">
-                        <label className="input-label">Application Deadline</label>
-                        <div className="input-with-icon">
-                            <Calendar className="field-icon" size={18} />
+                    <div className="input-row">
+                        <div className="input-wrap">
+                            <label className="input-label">Minimum Salary (UGX/month, optional)</label>
                             <input
-                                type="date"
-                                className="input"
-                                required
-                                value={form.deadline}
-                                onChange={e => setForm({ ...form, deadline: e.target.value })}
+                                type="number"
+                                className="input no-icon-padding"
+                                placeholder="e.g. 500000"
+                                value={form.salary_min}
+                                onChange={e => setForm({ ...form, salary_min: e.target.value })}
                             />
+                        </div>
+                        <div className="input-wrap">
+                            <label className="input-label">Maximum Salary (UGX/month, optional)</label>
+                            <input
+                                type="number"
+                                className="input no-icon-padding"
+                                placeholder="e.g. 1000000"
+                                value={form.salary_max}
+                                onChange={e => setForm({ ...form, salary_max: e.target.value })}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="input-row">
+                        <div className="input-wrap">
+                            <label className="input-label">Duration (optional)</label>
+                            <input
+                                className="input no-icon-padding"
+                                placeholder="e.g. 3 months"
+                                value={form.duration}
+                                onChange={e => setForm({ ...form, duration: e.target.value })}
+                            />
+                        </div>
+                        <div className="input-wrap">
+                            <label className="input-label">Application Deadline</label>
+                            <div className="input-with-icon">
+                                <Calendar className="field-icon" size={18} />
+                                <input
+                                    type="date"
+                                    className="input"
+                                    required
+                                    value={form.deadline}
+                                    onChange={e => setForm({ ...form, deadline: e.target.value })}
+                                />
+                            </div>
                         </div>
                     </div>
 

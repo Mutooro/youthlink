@@ -38,15 +38,6 @@ export default function ProgramDetail() {
 
         if (!error && data) {
             setProgram(data)
-        } else {
-            // Check demo data if DB is empty or ID is from demo
-            const demoPrograms = [
-                { id: 1, title: 'Tech Bootcamp 2025', description: '12-week intensive covering web development, data science, and mobile apps. Fully funded with a monthly stipend.', type: 'bootcamp', organizer: 'GIZ Uganda', cost: 0, start_date: '2025-08-01', district: 'Kampala', seats: 120, requirements: 'Basic computer literacy, Aged 18-30' },
-                { id: 2, title: 'Youth Entrepreneur Hub', description: '8-week business skills program with mentorship, seed funding access, and networking events across Uganda.', type: 'mentorship', organizer: 'NSSF Uganda', cost: 0, start_date: null, district: 'Kampala', seats: 60, requirements: 'Must have a business idea or active business' },
-                // ... other demo items
-            ]
-            const demo = demoPrograms.find(p => p.id === parseInt(id))
-            if (demo) setProgram(demo)
         }
         setLoading(false)
     }
@@ -73,7 +64,7 @@ export default function ProgramDetail() {
             .insert({
                 program_id: id,
                 profile_id: profile.id,
-                status: 'pending'
+                status: 'applied'
             })
 
         if (!error) {
@@ -99,7 +90,7 @@ export default function ProgramDetail() {
                     <Link to="/programs" className="back-link"><ArrowLeft size={18} /> All Programs</Link>
                     <div className="header-content">
                         <div className="badge-row">
-                            <span className="type-badge">{program.type}</span>
+                            <span className="type-badge">{program.program_type || program.type}</span>
                             <span className="cost-badge">{program.cost === 0 ? 'Free' : `UGX ${program.cost.toLocaleString()}`}</span>
                         </div>
                         <h1>{program.title}</h1>
