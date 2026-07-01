@@ -25,6 +25,8 @@ create table if not exists profiles (
   updated_at timestamptz default now()
 );
 
+create unique index if not exists profiles_user_id_key on profiles(user_id);
+
 create table if not exists employers (
   id uuid primary key default gen_random_uuid(),
   user_id uuid unique,
@@ -40,6 +42,8 @@ create table if not exists employers (
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
+
+create unique index if not exists employers_user_id_key on employers(user_id);
 
 create table if not exists listings (
   id uuid primary key default gen_random_uuid(),

@@ -42,13 +42,31 @@ export function AuthProvider({ children }) {
       onboarding_completed: role === 'employer'
     }
 
-    await supabase.from('profiles').upsert(profilePayload, { onConflict: 'user_id' })
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (existingProfile?.id) {
+      await supabase.from('profiles').update(profilePayload).eq('id', existingProfile.id)
+    } else {
+      await supabase.from('profiles').insert(profilePayload)
+    }
 
     if (role === 'employer') {
-      await supabase.from('employers').upsert(
-        { user_id: userId, company_name: `${fullName}'s company` },
-        { onConflict: 'user_id' }
-      )
+      const { data: existingEmployer } = await supabase
+        .from('employers')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle()
+
+      const employerPayload = { user_id: userId, company_name: `${fullName}'s company` }
+      if (existingEmployer?.id) {
+        await supabase.from('employers').update(employerPayload).eq('id', existingEmployer.id)
+      } else {
+        await supabase.from('employers').insert(employerPayload)
+      }
     }
   }
 

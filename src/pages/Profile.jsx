@@ -71,19 +71,26 @@ export default function Profile() {
     setSaving(true)
     const skillsArr = form.skills.split(',').map(s => s.trim()).filter(Boolean)
 
-    // upsert: INSERT if no profile row exists yet, UPDATE if it does.
-    const { error } = await supabase
+    const { data: existingProfile } = await supabase
       .from('profiles')
-      .upsert({
-        user_id: user.id,
-        full_name: form.full_name,
-        district: form.district,
-        phone: form.phone,
-        bio: form.bio,
-        skills: skillsArr,
-        availability: form.availability,
-        looking_for: form.looking_for,
-      }, { onConflict: 'user_id' })
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    const payload = {
+      user_id: user.id,
+      full_name: form.full_name,
+      district: form.district,
+      phone: form.phone,
+      bio: form.bio,
+      skills: skillsArr,
+      availability: form.availability,
+      looking_for: form.looking_for,
+    }
+
+    const { error } = existingProfile?.id
+      ? await supabase.from('profiles').update(payload).eq('id', existingProfile.id)
+      : await supabase.from('profiles').insert(payload)
 
     setSaving(false)
     if (!error) {

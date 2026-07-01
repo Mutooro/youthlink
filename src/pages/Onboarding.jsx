@@ -73,21 +73,27 @@ export default function Onboarding() {
         setSaveError('')
         const skillsArr = form.skills.split(',').map(s => s.trim()).filter(Boolean)
 
-        // upsert: INSERT if no profile row exists yet, UPDATE if it does.
-        // This handles both fresh sign-ups (no trigger) and returning users.
-        const { error } = await supabase
+        const { data: existingProfile } = await supabase
             .from('profiles')
-            .upsert({
-                user_id: user.id,
-                role: 'student',
-                full_name: form.full_name,
-                phone: form.phone,
-                district: form.district,
-                bio: form.bio,
-                skills: skillsArr,
-                looking_for: form.looking_for,
-                onboarding_completed: true
-            }, { onConflict: 'user_id' })
+            .select('id')
+            .eq('user_id', user.id)
+            .maybeSingle()
+
+        const payload = {
+            user_id: user.id,
+            role: 'student',
+            full_name: form.full_name,
+            phone: form.phone,
+            district: form.district,
+            bio: form.bio,
+            skills: skillsArr,
+            looking_for: form.looking_for,
+            onboarding_completed: true
+        }
+
+        const { error } = existingProfile?.id
+            ? await supabase.from('profiles').update(payload).eq('id', existingProfile.id)
+            : await supabase.from('profiles').insert(payload)
 
         if (!error) {
             await fetchProfile(user.id)
