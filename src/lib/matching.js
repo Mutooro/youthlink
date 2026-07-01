@@ -7,6 +7,11 @@ export function calculateMatchScore(profile = {}, listing = {}) {
     ? (matchedSkills.length / requiredSkills.length) * 60
     : 30
 
+  const matchedSkillNames = (listing.skills_required || []).filter((skill) => {
+    const normalized = skill.toLowerCase()
+    return profileSkills.includes(normalized)
+  })
+
   const locationScore = profile.district && profile.district.toLowerCase() === (listing.district || '').toLowerCase()
     ? 25
     : 10
@@ -15,5 +20,5 @@ export function calculateMatchScore(profile = {}, listing = {}) {
   const typeScore = profile.looking_for?.includes(listing.type) ? 10 : 0
   const total = Math.min(100, Math.round(skillScore + locationScore + availabilityScore + typeScore))
 
-  return { score: total, matchedSkills }
+  return { score: total, matchedSkills: matchedSkillNames }
 }
