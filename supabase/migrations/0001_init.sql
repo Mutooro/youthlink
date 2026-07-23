@@ -62,7 +62,7 @@ create table if not exists listings (
   category text,
   deadline date,
   slots integer default 1,
-  is_active boolean default true,
+  is_active boolean default false,
   views integer default 0,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -162,6 +162,41 @@ alter table applications enable row level security;
 alter table program_enrollments enable row level security;
 alter table notifications enable row level security;
 alter table cv_matches enable row level security;
+
+create or replace function public.handle_application_notification()
+returns trigger
+language plpgsql
+security definer
+as $$
+declare
+  listing_title text;
+  emp_user_id uuid;
+begin
+  if tg_op = 'INSERT' then
+    -- Get the employer's user_id and listing title
+    select e.user_id, l.title into emp_user_id, listing_title
+    from listings l
+    join employers e on e.id = l.employer_id
+    where l.id = new.listing_id;
+    
+    -- Notify the employer
+    insert into public.notifications (user_id, type, title, body)
+    values (emp_user_id, 'application_received', 'New Application', 'Someone applied to your job: ' || listing_title);
+  elsif tg_op = 'UPDATE' and old.status is distinct from new.status then
+    -- Notify the student that their status changed
+    insert into public.notifications (user_id, type, title, body)
+    select p.user_id, 'status_update', 'Application Status Update', 'Your application for a job has been marked as: ' || new.status
+    from profiles p
+    where p.id = new.profile_id;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_application_change on applications;
+create trigger on_application_change
+after insert or update on applications
+for each row execute function public.handle_application_notification();
 
 create policy if not exists profiles_select on profiles
   for select using (true);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { BadgeCheck } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 export default function EmployerPublicPage() {
@@ -25,7 +26,10 @@ export default function EmployerPublicPage() {
   return (
     <div className="page-loading" style={{ alignItems: 'center' }}>
       <div style={{ maxWidth: 840, width: '100%', background: 'white', borderRadius: 20, padding: '2rem', boxShadow: '0 20px 60px rgba(0,0,0,0.08)' }}>
-        <h1>{employer.company_name}</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {employer.company_name}
+          {employer.is_verified && <BadgeCheck size={28} color="#007bff" title="Verified Employer" />}
+        </h1>
         <p>{employer.description || 'A trusted employer on YouthLink Uganda.'}</p>
         <p><strong>Industry:</strong> {employer.industry || 'Not listed'}</p>
         <h2 style={{ marginTop: '1.5rem' }}>Open roles</h2>

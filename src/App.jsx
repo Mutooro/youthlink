@@ -17,6 +17,7 @@ import Notifications from './pages/Notifications'
 import NotFound from './pages/NotFound'
 import PublicProfile from './pages/PublicProfile'
 import EmployerPublicPage from './pages/EmployerPublicPage'
+import AdminDashboard from './pages/AdminDashboard'
 import Footer from './components/Footer'
 
 function ProtectedRoute({ children, allowedRole = null }) {
@@ -27,7 +28,9 @@ function ProtectedRoute({ children, allowedRole = null }) {
 
   if (allowedRole && profile && profile.role !== allowedRole) {
     // Redirect to the appropriate dashboard if the role doesn't match
-    const target = profile.role === 'employer' ? '/employer/dashboard' : '/dashboard'
+    let target = '/dashboard'
+    if (profile.role === 'employer') target = '/employer/dashboard'
+    else if (profile.role === 'admin') target = '/admin'
     return <Navigate to={target} replace />
   }
 
@@ -74,6 +77,14 @@ function AppRoutes() {
             <ManageJob />
           </ProtectedRoute>
         } />
+
+        {/* Admin Routes */}
+        <Route path="/admin" element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

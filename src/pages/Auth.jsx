@@ -29,7 +29,9 @@ export default function Auth() {
 
   useEffect(() => {
     if (user && profile) {
-      if (profile.role === 'employer') {
+      if (profile.role === 'admin') {
+        navigate('/admin')
+      } else if (profile.role === 'employer') {
         navigate('/employer/dashboard')
       } else if (profile.role === 'student' && !profile.onboarding_completed) {
         navigate('/onboarding')

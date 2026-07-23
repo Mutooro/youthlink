@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
       user_id: userId,
       full_name: fullName,
       role,
-      onboarding_completed: role === 'employer'
+      onboarding_completed: role === 'employer' || role === 'admin'
     }
 
     const { data: existingProfile } = await supabase

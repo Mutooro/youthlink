@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
+import { BadgeCheck } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import './JobDetail.css'
@@ -24,7 +25,7 @@ export default function JobDetail() {
   async function fetchJob() {
     const { data } = await supabase
       .from('listings')
-      .select('*, employers(company_name, logo_url, industry, website, description)')
+      .select('*, employers(company_name, logo_url, industry, website, description, is_verified)')
       .eq('id', id)
       .single()
     setJob(data)
@@ -85,7 +86,10 @@ export default function JobDetail() {
               </div>
               <div>
                 <h1 className="jd-title">{job.title}</h1>
-                <p className="jd-company">{employer.company_name}</p>
+                <p className="jd-company" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  {employer.company_name}
+                  {employer.is_verified && <BadgeCheck size={18} color="#007bff" title="Verified Employer" />}
+                </p>
               </div>
             </div>
 

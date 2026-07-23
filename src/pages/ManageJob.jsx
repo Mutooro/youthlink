@@ -44,6 +44,15 @@ export default function ManageJob() {
         }
     }
 
+    async function viewCV(cvUrl) {
+        const { data, error } = await supabase.storage.from('cvs').createSignedUrl(cvUrl, 60)
+        if (error) {
+            alert('Could not load CV. It may have been removed.')
+        } else {
+            window.open(data.signedUrl, '_blank')
+        }
+    }
+
     if (loading) return <div className="page-loading">Loading applicants...</div>
     if (!job) return <div className="not-found">Job listing not found.</div>
 
@@ -108,14 +117,12 @@ export default function ManageJob() {
                                                 </select>
 
                                                 {p.cv_url && (
-                                                    <a
-                                                        href={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/cvs/${p.cv_url}`}
-                                                        target="_blank"
-                                                        rel="noreferrer"
+                                                    <button
+                                                        onClick={() => viewCV(p.cv_url)}
                                                         className="btn btn-ghost btn-sm"
                                                     >
                                                         View CV 📄
-                                                    </a>
+                                                    </button>
                                                 )}
                                             </div>
                                             <span className="app-date">Applied {new Date(app.applied_at).toLocaleDateString()}</span>

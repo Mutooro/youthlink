@@ -12,7 +12,9 @@ import {
   MapPin,
   User,
   Info,
-  ChevronRight
+  ChevronRight,
+  Building2,
+  Globe
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -27,8 +29,17 @@ const AVAILABILITIES = [
   { value: 'not_looking', label: 'Not actively looking' },
 ]
 const LOOKING_FOR_OPTIONS = ['internship', 'fulltime', 'contract', 'parttime', 'program']
+const EMPLOYER_SIZES = ['1-10', '11-50', '51-200', '200+']
 
 export default function Profile() {
+  const { profile } = useAuth()
+  
+  if (!profile) return null
+  if (profile.role === 'employer') return <EmployerProfile />
+  return <StudentProfile />
+}
+
+function StudentProfile() {
   const { user, profile, fetchProfile } = useAuth()
   const [form, setForm] = useState({
     full_name: '', district: '', phone: '', bio: '',
@@ -302,6 +313,154 @@ export default function Profile() {
                 ))}
               </ul>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {toast && (
+        <div className="toast-container">
+          <div className={`toast ${toast.type}`}>
+            {toast.type === 'success' ? <Check size={18} /> : <AlertCircle size={18} />}
+            <span>{toast.msg}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function EmployerProfile() {
+  const { user, fetchProfile } = useAuth()
+  const [form, setForm] = useState({
+    company_name: '', industry: '', size: '', website: '', description: '', district: ''
+  })
+  const [saving, setSaving] = useState(false)
+  const [toast, setToast] = useState(null)
+  const [employerId, setEmployerId] = useState(null)
+
+  useEffect(() => {
+    async function loadEmployer() {
+      const { data } = await supabase.from('employers').select('*').eq('user_id', user.id).maybeSingle()
+      if (data) {
+        setEmployerId(data.id)
+        setForm({
+          company_name: data.company_name || '',
+          industry: data.industry || '',
+          size: data.size || '',
+          website: data.website || '',
+          description: data.description || '',
+          district: data.district || '',
+        })
+      }
+    }
+    loadEmployer()
+  }, [user.id])
+
+  function showToast(msg, type = 'success') {
+    setToast({ msg, type })
+    setTimeout(() => setToast(null), 3500)
+  }
+
+  async function handleSave() {
+    setSaving(true)
+    const payload = { ...form }
+    
+    // Size has a check constraint: '1-10', '11-50', '51-200', '200+'
+    if (!payload.size) payload.size = null
+
+    let err
+    if (employerId) {
+      const { error } = await supabase.from('employers').update(payload).eq('id', employerId)
+      err = error
+    } else {
+      payload.user_id = user.id
+      const { data, error } = await supabase.from('employers').insert(payload).select('id').single()
+      if (data) setEmployerId(data.id)
+      err = error
+    }
+
+    setSaving(false)
+    if (!err) {
+      fetchProfile(user.id) // To refresh context if needed
+      showToast('Company profile saved successfully!', 'success')
+    } else {
+      showToast('Error saving profile: ' + err.message, 'error')
+    }
+  }
+
+  return (
+    <div className="profile-page">
+      <div className="profile-inner">
+        <div className="profile-header">
+          <div className="profile-avatar-big">
+            <Building2 size={40} color="#fff" />
+          </div>
+          <div>
+            <h1>{form.company_name || 'Your Company'}</h1>
+            <p>Employer Profile</p>
+          </div>
+        </div>
+
+        <div className="profile-grid">
+          <div className="profile-section" style={{ gridColumn: '1 / -1' }}>
+            <h2 className="profile-section-title">Company Information</h2>
+
+            <div className="input-row">
+              <div className="input-wrap">
+                <label className="input-label">Company name</label>
+                <div className="input-icon-wrap">
+                  <Building2 className="input-icon" size={18} />
+                  <input className="input" type="text" value={form.company_name} onChange={e => setForm(f => ({ ...f, company_name: e.target.value }))} placeholder="Company name" />
+                </div>
+              </div>
+              <div className="input-wrap">
+                <label className="input-label">Industry</label>
+                <div className="input-icon-wrap">
+                  <Info className="input-icon" size={18} />
+                  <input className="input" type="text" value={form.industry} onChange={e => setForm(f => ({ ...f, industry: e.target.value }))} placeholder="e.g. Technology, Healthcare" />
+                </div>
+              </div>
+            </div>
+
+            <div className="input-row">
+              <div className="input-wrap">
+                <label className="input-label">Company Size</label>
+                <select className="input" value={form.size} onChange={e => setForm(f => ({ ...f, size: e.target.value }))}>
+                  <option value="">Select size</option>
+                  {EMPLOYER_SIZES.map(s => <option key={s} value={s}>{s} employees</option>)}
+                </select>
+              </div>
+              <div className="input-wrap">
+                <label className="input-label">Location (District)</label>
+                <div className="input-icon-wrap">
+                  <MapPin className="input-icon" size={18} />
+                  <select className="input" value={form.district} onChange={e => setForm(f => ({ ...f, district: e.target.value }))}>
+                    <option value="">Select district</option>
+                    {DISTRICTS.map(d => <option key={d}>{d}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="input-wrap">
+              <label className="input-label">Website</label>
+              <div className="input-icon-wrap">
+                <Globe className="input-icon" size={18} />
+                <input className="input" type="url" value={form.website} onChange={e => setForm(f => ({ ...f, website: e.target.value }))} placeholder="https://example.com" />
+              </div>
+            </div>
+
+            <div className="input-wrap">
+              <label className="input-label">About the company</label>
+              <div className="textarea-icon-wrap">
+                <Info className="textarea-icon" size={18} />
+                <textarea className="input" rows={5} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Tell candidates about what you do..." />
+              </div>
+            </div>
+
+            <button className="btn btn-primary btn-save" onClick={handleSave} disabled={saving}>
+              {saving ? 'Saving...' : <><Save size={18} /> Save Company Profile</>}
+            </button>
           </div>
         </div>
       </div>

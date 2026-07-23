@@ -31,17 +31,7 @@ export function useMatches(profile) {
 
             const scoredListings = await Promise.all(listings.map(async (job) => {
                 const localMatch = calculateMatchScore(profile, job)
-                const response = await fetch('/api/match', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ profile, listing: job })
-                }).catch(() => null)
-
-                const serverMatch = response?.ok ? await response.json() : null
-                const score = serverMatch?.score ?? localMatch.score
-                const matchedSkills = serverMatch?.matchedSkills ?? localMatch.matchedSkills
-
-                return { ...job, matchScore: score, matchedSkills }
+                return { ...job, matchScore: localMatch.score, matchedSkills: localMatch.matchedSkills }
             }))
 
             const highQualityMatches = scoredListings

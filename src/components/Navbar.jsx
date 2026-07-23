@@ -9,7 +9,8 @@ import {
   Briefcase,
   GraduationCap,
   ArrowRight,
-  Bell
+  Bell,
+  ShieldAlert
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useNotifications } from '../context/NotificationContext'
@@ -23,7 +24,8 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   const isEmployer = profile?.role === 'employer'
-  const dashboardPath = isEmployer ? '/employer/dashboard' : '/dashboard'
+  const isAdmin = profile?.role === 'admin'
+  const dashboardPath = isAdmin ? '/admin' : isEmployer ? '/employer/dashboard' : '/dashboard'
 
   const links = [
     { to: '/jobs', label: 'Jobs & Internships', icon: Briefcase },
@@ -59,6 +61,14 @@ export default function Navbar() {
             <li>
               <Link to="/post-job" className={`nav-link ${location.pathname === '/post-job' ? 'active' : ''}`}>
                 Post a Job
+              </Link>
+            </li>
+          )}
+          {isAdmin && (
+            <li>
+              <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`}>
+                <ShieldAlert size={16} style={{ marginRight: '6px', verticalAlign: 'text-bottom' }} />
+                Admin
               </Link>
             </li>
           )}
@@ -112,6 +122,12 @@ export default function Navbar() {
               <Link to="/post-job" className="mobile-link" onClick={() => setMenuOpen(false)}>
                 <Briefcase size={20} />
                 <span>Post a Job</span>
+              </Link>
+            )}
+            {isAdmin && (
+              <Link to="/admin" className="mobile-link" onClick={() => setMenuOpen(false)}>
+                <ShieldAlert size={20} />
+                <span>Admin Dashboard</span>
               </Link>
             )}
             <div className="mobile-divider" />
